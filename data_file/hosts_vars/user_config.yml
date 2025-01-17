@@ -1,0 +1,8 @@
+new_user:
+  username: simeon
+  shell: /bin/bash
+  groups: wheel
+
+allowed_ssh_users:
+  - simeon
+  - vagrant
