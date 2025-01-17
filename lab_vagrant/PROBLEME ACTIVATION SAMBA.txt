@@ -1,0 +1,27 @@
+PROBLEME ACTIVATION SAMBA 
+ dans /etc/smb.conf rajouter ça 
+
+tls enabled = false
+ldap server require strong auth = no
+
+sudo systemctl start samba-ad-dc
+sudo systemctl enable samba-ad-dc
+
+
+
+
+
+POUR JOINDRE LE DOMAINE / 
+
+configurer le fichier cat /etc/hosts  et le resolv.conf avec l'ip du serveur samba
+
+sudo realm join signing.linux --user=administrator
+
+
+
+PROBLEME SSH AVEC DEBIAN : 
+ - se connecter a la machine Debian puis modifier le mot de passe de vagrant ( sudo passwd vagrant) 
+ - aller dans le ficher /etc/ssh/sshd_config de la machine debiane
+ - puis modifier ces lignes : PasswordAuthentication yes
+			      PubkeyAuthentication yes
+ - sudo systemctl restart sshd 

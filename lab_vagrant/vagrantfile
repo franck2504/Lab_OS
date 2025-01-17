@@ -1,0 +1,31 @@
+RAM = 2024
+CPU = 2
+
+Vagrant.configure("2") do |config|
+    config.vm.define "debian" do |debian|
+        debian.vm.box="hashicorp/bionic64"
+        debian.vm.hostname="debian-server"
+        debian.vm.synced_folder "src/", "/srv/website"
+        debian.vm.network "private_network", ip: 192.168.56.50
+        debian.vm.network "forwarded_port" , guest:8080 , host:5050 , ip_host:127.0.0.1
+        debian.vm.provision :shell path: "docker.sh"
+        web1.vm.provision "shell", inline: <<-SHELL
+            echo "vagrant ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/vagrant
+        debian.vm.provider "virtualbox" do |v|
+            v.memory: RAM
+            v.cpus: CPU
+        end
+    end
+
+    config.vm.define "fedora" do |fedora|
+        fedora.vm.box="fedora"
+        fedora.vm.hostname="fedora-server"
+        fedora.vm.provision type: shell path:'docker.sh'
+        fedora.vm.network "private_network" , ip: 192.168.56.32
+        fedora.vm.network "forwarded_network" guest: 8080, host: 5050 , ip_host: 127.0.0.1
+        fedora.vm.provider "virtualbox" do |v|
+            v.memory:RAM
+            v.cpus:CPU
+        end
+    end
+end
