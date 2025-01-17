@@ -1,0 +1,44 @@
+---
+- hosts: fedora-server
+  become: yes
+  roles:
+    - ansible-role-vsftpd
+  # vars:
+  #   vsftpd_listen: true
+  #   vsftpd_listen_ipv6: false
+  #   vsftpd_anonymous_enable: true # Explicitly set to disable anonymous access
+
+  # tasks:
+  #   - name: Remove specific lines from vsftpd.conf
+  #     lineinfile:
+  #       path: /etc/vsftpd/vsftpd.conf
+  #       regexp: "{{ item }}"
+  #       state: absent
+  #     loop:
+  #       - "nopriv_user=ftpsecure"
+  #       - "deny_email_enable=YES"
+  #       - "banned_email_file=/etc/vsftpd/banned_emails"
+  #       - "chroot_list_file=/etc/vsftpd/chroot_list"
+  #       - "userlist_enable=YES"
+  #       - "secure_chroot_dir=/var/run/vsftpd/empty"
+  #     notify: Restart vsftpd
+
+  #   - name: Allow FTP through firewall
+  #     command: firewall-cmd --permanent --add-service=ftp
+  #     notify: Reload firewall
+
+  #   - name: Disable anonymous FTP access
+  #     lineinfile:
+  #       path: /etc/vsftpd/vsftpd.conf
+  #       regexp: '^anonymous_enable='
+  #       line: 'anonymous_enable=NO'
+  #     notify: Restart vsftpd
+
+  # handlers:
+  #   - name: Restart vsftpd
+  #     service:
+  #       name: vsftpd
+  #       state: restarted
+
+  #   - name: Reload firewall
+  #     command: firewall-cmd --reload

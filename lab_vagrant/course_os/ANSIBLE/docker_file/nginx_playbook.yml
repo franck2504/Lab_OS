@@ -1,0 +1,5 @@
+---
+- hosts: debian-server
+  become: yes
+  roles:
+    - nginx

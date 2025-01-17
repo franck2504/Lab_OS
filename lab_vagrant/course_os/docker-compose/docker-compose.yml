@@ -1,0 +1,20 @@
+name: base
+services:
+  WWW:
+    image: nginx:1.27
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./vagrant/html:/usr/share/nginx/html
+    depends_on:
+      - DB
+  DB:
+    image: mariadb:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=tttttt
+    volumes:
+      - dbvol:/var/lib/mysql
+volumes:
+  dbvol:

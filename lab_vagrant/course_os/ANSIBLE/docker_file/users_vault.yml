@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: yes
+  vars_files:
+    - secu_users.yml
+    - admin_users.yml
+  tasks:
+    - name: Create security users
+      user:
+        name: "{{ item.key }}"
+        password: "{{ item.value | password_hash('sha512') }}"
+        state: present
+      loop: "{{ secu_users | dict2items }}"
+      when: inventory_hostname in groups['webservers']
+      #no_log: true
+
+    - name: Create admin users
+      user:
+        name: "{{ item.key }}"
+        password: "{{ item.value | password_hash('sha512') }}"
+        state: present
+      loop: "{{ admin_users | dict2items }}"
+      when: inventory_hostname in groups['dnsservers']
+      #no_log: true

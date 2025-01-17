@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    image: traefik:v2.9
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+    labels:
+      - "traefik.http.routers.wordpress.rule=Host(`wordpress.example.com`)"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=8080"
+
+    networks:
+      - wp_network
+      - git_network
+
+networks:
+  wp_network:
+    external: true
+  git_network:
+    external: true

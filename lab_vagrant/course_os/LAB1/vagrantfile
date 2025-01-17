@@ -1,0 +1,19 @@
+RAM = 2024
+CPU = 2
+
+Vagrant.configure("2") do |config|
+
+    config.vm.define "web1" do |web1|
+        web1.vm.box = "ubuntu/focal64"
+        web1.vm.provision :shell, path: "install_docker.sh"
+        web1.vm.synced_folder "./docker_file", "/home/vagrant/docker_file"
+        web1.vm.synced_folder "./docker_vol", "/home/vagrant/docker_vol"
+        web1.vm.network "forwarded_port", guest: 8080, host: 5050
+        #web1.vm.provision :shell, path: "minikube_install.sh"
+        web1.vm.network "private_network", ip: "192.168.56.12"
+        web1.vm.provider "virtualbox" do |v|
+            v.memory = RAM
+            v.cpus = CPU
+        end
+    end
+end

@@ -1,0 +1,38 @@
+services:
+  web:
+    build:
+      context: app
+    ports: 
+    - '8081:80'
+    volumes:
+    - ./app:/var/www/html/
+
+
+
+
+
+
+# services:
+#   web:
+#     image:
+#       context: app
+#     ports:
+#       - '8080:80'
+#     volumes:
+#       - ./app:/var/www/html/
+#     networks:
+#       - internal
+#   reverse-proxy:
+#     image: nginx:latest
+#     ports:
+#       - '80:80'
+#     volumes:
+#       -./nginx.conf:/etc/nginx/nginx.conf
+#     depends_on:
+#       - web
+#     networks:
+#       - internal
+# networks:
+#   - internal:
+#       driver: bridge
+

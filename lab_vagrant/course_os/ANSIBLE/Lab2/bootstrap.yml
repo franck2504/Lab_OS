@@ -1,0 +1,73 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - hosts_vars/user_config.yml
+
+  pre_tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Update dnf cache (Fedora)
+      dnf:
+        update_cache: yes
+      when: ansible_distribution == "Fedora"
+
+    - name: Update pacman cache (Arch Linux)
+      pacman:
+        update_cache: yes
+      when: ansible_distribution == "Archlinux"
+
+  tasks:
+    - name: Ensure sudo is installed
+      package:
+        name: sudo
+        state: present
+
+    - name: Create new user
+      user:
+        name: "{{ new_user.username }}"
+        shell: "{{ new_user.shell }}"
+        groups: "{{ new_user.groups }}"
+        state: present
+
+    - name: Disable root SSH access
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+      notify: Restart SSH
+
+    - name: Allow specific users SSH access
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^AllowUsers'
+        line: "AllowUsers {{ allowed_ssh_users | join(' ') }}"
+      notify: Restart SSH
+
+    - name: Add new user to sudoers
+      lineinfile:
+        path: /etc/sudoers
+        line: '{{ new_user.username }} ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Disable SSH password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+      notify: Restart SSH
+
+    - name: Add SSH key for new user
+      authorized_key:
+        user: "{{ new_user.username }}"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: sshd
+        state: restarted
+

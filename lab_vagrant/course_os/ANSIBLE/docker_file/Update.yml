@@ -1,0 +1,59 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update all hosts
+      package:
+        name: '*'
+        state: latest
+      tags: 
+        - update
+
+- hosts: fedora-server
+  become: yes
+  tasks:
+    - name: Install Apache and PHP on Fedora
+      dnf:
+        name:
+          - httpd
+          - php
+        state: present
+    
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    
+    - name: Start and enable PHP-FPM
+      service:
+        name: php-fpm
+        state: started
+        enabled: yes
+
+- hosts: archlinux-server
+  become: yes
+  tags:
+    - maria
+  tasks:
+    - name: Install MariaDB on Arch Linux
+      pacman:
+        name: mariadb
+        state: present
+    
+    - name: Start and enable MariaDB
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+    
+    - name: Install Samba on Arch Linux
+      pacman:
+        name: samba
+        state: present
+    
+    - name: Start and enable Samba
+      service:
+        name: smb
+        state: started
+        enabled: yes

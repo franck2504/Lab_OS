@@ -1,0 +1,17 @@
+---
+- name: Check web server
+  hosts: webservers
+  tasks:
+    - name: Install curl
+      become: yes
+      package:
+        name: curl
+        state: present
+
+    - name: Get web content
+      command: curl http://localhost
+      register: curl_output
+
+    - name: Display web content
+      debug:
+        var: curl_output.stdout_lines

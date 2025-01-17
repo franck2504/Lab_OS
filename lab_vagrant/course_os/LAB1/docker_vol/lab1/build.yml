@@ -1,0 +1,23 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Créer une image Docker et démarrer un conteneur Apache
+  hosts: localhost
+  gather_facts: false
+  vars:
+    # Variables personnalisables
+    image_name: "test/apache"
+    image_tag: "latest"
+    container_name: "apache_container"
+    http_port: 8080
+    dockerfile_path: "./apache"  # Chemin vers le dossier contenant le Dockerfile
+
+  tasks:
+    - name: Créer l'image vfre Docker à partir du Dockerfile
+      docker_image:
+        build:
+          path: "{{ dockerfile_path }}"  # Chemin du dossier contenant le Dockerfile
+        source: build
+        state: present
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        force_source: "{{ force_source | default(false) }}"

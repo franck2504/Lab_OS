@@ -1,0 +1,42 @@
+RAM = 2024
+CPU = 2
+
+Vagrant.configure("2") do |config|
+    config.vm.define "lb" do |lb|
+        lb.vm.box = "rhel9"
+        # # lb.vm.provision :shell, path: "bootstrap.sh"
+        lb.vm.provision :"shell", inline: <<-SHELL 
+            subscription-manager status 
+        SHELL
+        # lb.vm.network "private_network", ip: "192.168.56.11"
+        # lb.vm.provider "virtualbox" do |v|
+        #     v.memory = RAM
+        #     v.cpus = CPU
+        if Vagrant.has_plugin?("vagrant-registration")
+            config.registration.username = ENV['RHSM_USERNAME']
+            config.registration.password = ENV['RHSM_PASSWORD']
+        end
+    end
+
+    # config.vm.define "web1" do |web1|
+    #     web1.vm.box = "debian/buster64"
+    #     web1.vm.provision :shell, path: "bootstrap.sh"
+    #     #web1.vm.provision :shell, path: "minikube_install.sh"
+    #     web1.vm.network "private_network", ip: "192.168.56.12"
+    #     web1.vm.provider "virtualbox" do |v|
+    #         v.memory = RAM
+    #         v.cpus = CPU
+    #     end
+    # end
+
+    # config.vm.define "web2" do |web2|
+    #     web2.vm.box = "debian/buster64"
+    #     web2.vm.provision :shell, path: "bootstrap.sh"
+    #     #web1.vm.provision :shell, path: "minikube_install.sh"
+    #     web2.vm.network "private_network", ip: "192.168.56.13"
+    #     web2.vm.provider "virtualbox" do |v|
+    #         v.memory = RAM
+    #         v.cpus = CPU
+    #     end
+    # end
+end

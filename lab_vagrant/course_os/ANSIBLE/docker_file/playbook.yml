@@ -1,0 +1,23 @@
+---
+- name: Afficher la distribution et copier un fichier
+  hosts: all
+  vars:
+    destination_dir: /tmp/ansible_test
+  
+  tasks:
+    - name: Afficher la distribution et la version
+      debug:
+        msg: "Distribution: {{ ansible_distribution }}, Version: {{ ansible_distribution_version }}"
+
+    - name: Copier un fichier
+      copy:
+        src: ./host.ini
+        dest: "{{ destination_dir }}/fichier_copie"
+
+    - name: Capturer la sortie de ls -la /etc
+      command: ls -la /etc
+      register: ls_output
+
+    - name: Afficher la sortie de ls
+      debug:
+        var: ls_output.stdout_lines

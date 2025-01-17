@@ -1,0 +1,27 @@
+api:
+  dashboard: true
+
+entryPoints:
+  http:
+    address: ":80"
+
+  https:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false
+
+http:
+  routers:
+    wordpress:
+      rule: "Host(`wordpress.example.com`)"
+      service: wordpress
+      entryPoints:
+        - http
+
+    git:
+      rule: "Host(`git.example.com`)"
+      service: git
+      entryPoints:
+        - http

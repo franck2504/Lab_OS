@@ -1,0 +1,41 @@
+---
+- name: Configure custom Nginx web server
+  hosts: all
+  become: yes
+  tasks:
+    - name: Vérifier que nginx est installé
+      package:
+        name: nginx
+        state: present
+    - name: Créer les répertoires nécessaires pour la configuration de nginx
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /etc/nginx/sites-available
+        - /etc/nginx/sites-enabled
+    - name: Copier le fichier de configuration nginx
+      copy:
+        src: ./nginx/nginx.conf
+        dest: /etc/nginx/sites-available/custom.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Activer la configuration
+      file:
+        src: /etc/nginx/sites-available/custom.conf
+        dest: /etc/nginx/sites-enabled/custom.conf
+        state: link
+
+    - name: Copier le fichier index.html
+      template:
+        src: ./index.html
+        dest: /usr/share/nginx/html/index.html
+        mode: '0644'
+
+    - name: Redémarrer le service nginx
+      service:
+        name: nginx
+        state: restarted
